@@ -15,7 +15,7 @@ app.get("/", async (c) => {
   if (!accessToken) {
     return c.render(
       <>
-        <h1>DiscordAuthテスト</h1>
+        <h1>DiscordOAuthテスト</h1>
         <a href="/auth/login">Discordでログインする</a>
       </>,
     );
@@ -24,14 +24,38 @@ app.get("/", async (c) => {
     const userRes = await fetch("https://discord.com/api/users/@me", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const user=await userRes.json() as any
+    const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    const user=await userRes.json() as {avatar:string,id:string}
+    const guilds=await guildsRes.json() as {id:string,name:string}[]
+    const result=guilds.find(item=>item.id===c.env.OUR_GUILDS_ID)
     return c.render(
       <>
         <h1>DiscordAuthテスト</h1>
-        <p><a href="/auth/login">Discordでログインする</a></p>
-        <p><a href="/auth/logout">ログアウト</a></p>
+        <p>
+          <a href="/auth/login">Discordでログインする</a>
+          <br />
+          <a href="/auth/logout">ログアウト</a>
+        </p>
         <h2>ユーザー情報</h2>
-        {JSON.stringify(user)}
+        <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`} alt="" />
+        <table>
+          <tbody>
+            {Object.entries(user).map(([key,value])=>{
+              return (<tr>
+                <th scope="row">{key}</th>
+                <td>{JSON.stringify(value)}</td>
+              </tr>)
+            })}
+          </tbody>
+        </table>
+        <h2>所属</h2>
+        {result ? <p>あなたはCODE MATESに所属しています</p>:<h3>あなたはCODE MATESに所属していません</h3>}
+        <h3>あなたの所属一覧</h3>
+        <ul>
+        {guilds.map(guild=><li>{guild.name}</li>)}
+        </ul>
       </>,
     );
   }
