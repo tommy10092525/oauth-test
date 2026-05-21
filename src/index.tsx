@@ -32,7 +32,7 @@ app.get("/", async (c) => {
     const result=guilds.find(item=>item.id===c.env.OUR_GUILDS_ID)
     return c.render(
       <>
-        <h1>DiscordAuthテスト</h1>
+        <h1>DiscordOAuthテスト</h1>
         <p>
           <a href="/auth/login">Discordでログインする</a>
           <br />
