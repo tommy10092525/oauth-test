@@ -29,7 +29,7 @@ app.get("/", async (c) => {
     })
     const user=await userRes.json() as {avatar:string,id:string}
     const guilds=await guildsRes.json() as {id:string,name:string}[]
-    const result=guilds.find(item=>item.id===c.env.OUR_GUILDS_ID)
+    const inOurGuild=guilds.find(item=>item.id===c.env.OUR_GUILDS_ID)
     return c.render(
       <>
         <h1>DiscordOAuthテスト</h1>
@@ -51,7 +51,7 @@ app.get("/", async (c) => {
           </tbody>
         </table>
         <h2>所属</h2>
-        {result ? <p>あなたはCODE MATESに所属しています</p>:<h3>あなたはCODE MATESに所属していません</h3>}
+        {inOurGuild ? <p>あなたはCODE MATESに所属しています</p>:<h3>あなたはCODE MATESに所属していません</h3>}
         <h3>あなたの所属一覧</h3>
         <ul>
         {guilds.map(guild=><li>{guild.name}</li>)}
